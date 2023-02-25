@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/mattermost/mattermost-server/v6/audit"
 	"github.com/mattermost/mattermost-server/v6/model"
 	"github.com/mattermost/mattermost-server/v6/shared/mlog"
@@ -78,12 +79,16 @@ func (api *API) InitTeam() {
 }
 
 func createTeam(c *Context, w http.ResponseWriter, r *http.Request) {
+	// ?
 	var team model.Team
 	if jsonErr := json.NewDecoder(r.Body).Decode(&team); jsonErr != nil {
 		c.SetInvalidParamWithErr("team", jsonErr)
 		return
 	}
 	team.Email = strings.ToLower(team.Email)
+	myUUID := uuid.NewString()
+
+	team.TeamCode = myUUID[0:6]
 
 	auditRec := c.MakeAuditRecord("createTeam", audit.Fail)
 	defer c.LogAuditRec(auditRec)

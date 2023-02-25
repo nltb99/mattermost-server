@@ -42,6 +42,7 @@ type Team struct {
 	GroupConstrained    *bool   `json:"group_constrained"`
 	PolicyID            *string `json:"policy_id"`
 	CloudLimitsArchived bool    `json:"cloud_limits_archived"`
+	TeamCode            string  `json:"team_code"`
 }
 
 func (o *Team) Auditable() map[string]interface{} {
@@ -168,6 +169,7 @@ func (o *Team) PreSave() {
 	o.DisplayName = SanitizeUnicode(o.DisplayName)
 	o.Description = SanitizeUnicode(o.Description)
 	o.CompanyName = SanitizeUnicode(o.CompanyName)
+	o.TeamCode = SanitizeUnicode(o.TeamCode)
 
 	if o.InviteId == "" {
 		o.InviteId = NewId()
