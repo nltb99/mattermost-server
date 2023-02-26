@@ -160,7 +160,7 @@ func (us SqlUserStore) Save(user *model.User) (*model.User, error) {
 		err := us.GetTeamId(user)
 
 		if err != nil {
-			return nil, err
+			return nil, store.NewErrInvalidInput("Team", "team_code", user.TeamCode)
 		}
 	}
 

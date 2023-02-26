@@ -550,6 +550,8 @@ func (a *App) importUser(c request.CTX, data *imports.UserImportData, dryRun boo
 					return model.NewAppError("importUser", "app.user.save.email_exists.app_error", nil, "", http.StatusBadRequest).Wrap(err)
 				case "username":
 					return model.NewAppError("importUser", "app.user.save.username_exists.app_error", nil, "", http.StatusBadRequest).Wrap(err)
+				case "team_code":
+					return model.NewAppError("importUser", "app.user.save.team_code.app_error", nil, "", http.StatusBadRequest).Wrap(err)
 				default:
 					return model.NewAppError("importUser", "app.user.save.existing.app_error", nil, "", http.StatusBadRequest).Wrap(err)
 				}

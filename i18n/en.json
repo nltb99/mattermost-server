@@ -6856,6 +6856,10 @@
     "translation": "An account with that email already exists."
   },
   {
+    "id": "app.user.save.team_code.app_error",
+    "translation": "Team Code Not Found"
+  },
+  {
     "id": "app.user.save.existing.app_error",
     "translation": "Must call update for existing user."
   },

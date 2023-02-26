@@ -268,6 +268,8 @@ func (a *App) createUserOrGuest(c request.CTX, user *model.User, guest bool) (*m
 				return nil, model.NewAppError("createUserOrGuest", "app.user.save.email_exists.app_error", nil, "", http.StatusBadRequest).Wrap(nErr)
 			case "username":
 				return nil, model.NewAppError("createUserOrGuest", "app.user.save.username_exists.app_error", nil, "", http.StatusBadRequest).Wrap(nErr)
+			case "team_code":
+				return nil, model.NewAppError("createUserOrGuest", "app.user.save.team_code.app_error", nil, "", http.StatusBadRequest).Wrap(nErr)
 			default:
 				return nil, model.NewAppError("createUserOrGuest", "app.user.save.existing.app_error", nil, "", http.StatusBadRequest).Wrap(nErr)
 			}
