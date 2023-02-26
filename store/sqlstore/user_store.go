@@ -76,9 +76,9 @@ func (us SqlUserStore) validateAutoResponderMessageSize(notifyProps model.String
 
 func (us SqlUserStore) InsertUserToTeam(teamMember model.InsertTeamMember) {
 	query := `INSERT INTO TeamMembers
-		(TeamId, UserId)
+		(TeamId, UserId,Roles, DeleteAt, SchemeUser, SchemeAdmin, SchemeGuest, CreateAt)
 		VALUES
-		(:TeamId, :UserId)`
+		(:TeamId, :UserId, '', 0, 1, 0, 0, UNIX_TIMESTAMP())`
 
 	teamMember.Props = wrapBinaryParamStringMap(us.IsBinaryParamEnabled(), teamMember.Props)
 	us.GetMasterX().NamedExec(query, teamMember)
