@@ -74,6 +74,46 @@ func (us SqlUserStore) validateAutoResponderMessageSize(notifyProps model.String
 	return nil
 }
 
+func (us SqlUserStore) InsertUserToTeam(teamMember model.InsertTeamMember) {
+	query := `INSERT INTO TeamMembers
+		(TeamId, UserId)
+		VALUES
+		(:TeamId, :UserId)`
+
+	teamMember.Props = wrapBinaryParamStringMap(us.IsBinaryParamEnabled(), teamMember.Props)
+	us.GetMasterX().NamedExec(query, teamMember)
+}
+
+func (us SqlUserStore) GetTeamId(user *model.User) error {
+	selectQuery := us.getQueryBuilder().Select("Id").From("Teams").Where(sq.Eq{"TeamCode": user.TeamCode})
+
+	queryString, args, err := selectQuery.ToSql()
+
+	if err != nil {
+		return errors.Wrap(err, "error_tosql")
+	}
+
+	teamIds := []string{}
+
+	err = us.GetMasterX().Select(&teamIds, queryString, args...)
+
+	if err != nil {
+		return errors.Wrap(err, "team_not_found")
+	}
+
+	if len(teamIds) > 0 && teamIds[0] != "" {
+		payloadInsert := model.InsertTeamMember{
+			TeamId: teamIds[0],
+			UserId: user.Id,
+		}
+
+		us.InsertUserToTeam(payloadInsert)
+		return nil
+	}
+
+	return errors.Wrap(errors.New("Team Not Found"), "team_not_found")
+}
+
 func (us SqlUserStore) insert(user *model.User) (sql.Result, error) {
 	if err := us.validateAutoResponderMessageSize(user.NotifyProps); err != nil {
 		return nil, err
@@ -83,12 +123,12 @@ func (us SqlUserStore) insert(user *model.User) (sql.Result, error) {
 		(Id, CreateAt, UpdateAt, DeleteAt, Username, Password, AuthData, AuthService,
 			Email, EmailVerified, Nickname, FirstName, LastName, Position, Roles, AllowMarketing,
 			Props, NotifyProps, LastPasswordUpdate, LastPictureUpdate, FailedAttempts,
-			Locale, Timezone, MfaActive, MfaSecret, RemoteId, TeamCode)
+			Locale, Timezone, MfaActive, MfaSecret, RemoteId)
 		VALUES
 		(:Id, :CreateAt, :UpdateAt, :DeleteAt, :Username, :Password, :AuthData, :AuthService,
 			:Email, :EmailVerified, :Nickname, :FirstName, :LastName, :Position, :Roles, :AllowMarketing,
 			:Props, :NotifyProps, :LastPasswordUpdate, :LastPictureUpdate, :FailedAttempts,
-			:Locale, :Timezone, :MfaActive, :MfaSecret, :RemoteId, :TeamCode)`
+			:Locale, :Timezone, :MfaActive, :MfaSecret, :RemoteId)`
 
 	user.Props = wrapBinaryParamStringMap(us.IsBinaryParamEnabled(), user.Props)
 	return us.GetMasterX().NamedExec(query, user)
@@ -113,6 +153,15 @@ func (us SqlUserStore) Save(user *model.User) (*model.User, error) {
 	user.PreSave()
 	if err := user.IsValid(); err != nil {
 		return nil, err
+	}
+
+	// ?
+	if user.TeamCode != "" {
+		err := us.GetTeamId(user)
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if _, err := us.insert(user); err != nil {

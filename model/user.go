@@ -106,6 +106,12 @@ type User struct {
 	TeamCode               string    `json:"team_code"`
 }
 
+type InsertTeamMember struct {
+	TeamId string    `json:"team_id"`
+	UserId string    `json:"user_id"`
+	Props  StringMap `json:"props,omitempty"`
+}
+
 func (u *User) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"id":                         u.Id,
