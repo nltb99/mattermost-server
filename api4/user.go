@@ -109,6 +109,7 @@ func (api *API) InitUser() {
 }
 
 func createUser(c *Context, w http.ResponseWriter, r *http.Request) {
+	// ?
 	var user model.User
 	if jsonErr := json.NewDecoder(r.Body).Decode(&user); jsonErr != nil {
 		c.SetInvalidParamWithErr("user", jsonErr)
@@ -131,6 +132,7 @@ func createUser(c *Context, w http.ResponseWriter, r *http.Request) {
 
 	var ruser *model.User
 	var err *model.AppError
+
 	if tokenId != "" {
 		token, appErr := c.App.GetTokenById(tokenId)
 		if appErr != nil {
