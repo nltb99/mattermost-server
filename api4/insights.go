@@ -107,10 +107,11 @@ func getTopReactionsForUserSince(c *Context, w http.ResponseWriter, r *http.Requ
 
 	// TeamId is an optional parameter
 	if c.Params.TeamId != "" {
-		if !model.IsValidId(c.Params.TeamId) {
-			c.SetInvalidURLParam("team_id")
-			return
-		}
+		// TODO TEMP team id ?
+		// if !model.IsValidId(c.Params.TeamId) {
+		// 	c.SetInvalidURLParam("team_id")
+		// 	return
+		// }
 
 		team, appErr := c.App.GetTeam(c.Params.TeamId)
 		if appErr != nil {
@@ -230,10 +231,11 @@ func getTopChannelsForUserSince(c *Context, w http.ResponseWriter, r *http.Reque
 
 	// TeamId is an optional parameter
 	if c.Params.TeamId != "" {
-		if !model.IsValidId(c.Params.TeamId) {
-			c.SetInvalidURLParam("team_id")
-			return
-		}
+		// TODO TEMP team id ?
+		// if !model.IsValidId(c.Params.TeamId) {
+		// 	c.SetInvalidURLParam("team_id")
+		// 	return
+		// }
 
 		team, appErr := c.App.GetTeam(c.Params.TeamId)
 		if appErr != nil {
@@ -359,10 +361,11 @@ func getTopThreadsForUserSince(c *Context, w http.ResponseWriter, r *http.Reques
 	}
 	// TeamId is an optional parameter
 	if c.Params.TeamId != "" {
-		if !model.IsValidId(c.Params.TeamId) {
-			c.SetInvalidURLParam("team_id")
-			return
-		}
+		// TODO TEMP team id ?
+		// if !model.IsValidId(c.Params.TeamId) {
+		// 	c.SetInvalidURLParam("team_id")
+		// 	return
+		// }
 
 		team, teamErr := c.App.GetTeam(c.Params.TeamId)
 		if teamErr != nil {
@@ -510,10 +513,11 @@ func getTopInactiveChannelsForUserSince(c *Context, w http.ResponseWriter, r *ht
 
 	// TeamId is an optional parameter
 	if c.Params.TeamId != "" {
-		if !model.IsValidId(c.Params.TeamId) {
-			c.SetInvalidURLParam("team_id")
-			return
-		}
+		// TODO TEMP team id ?
+		// if !model.IsValidId(c.Params.TeamId) {
+		// 	c.SetInvalidURLParam("team_id")
+		// 	return
+		// }
 
 		team, teamErr := c.App.GetTeam(c.Params.TeamId)
 		if teamErr != nil {

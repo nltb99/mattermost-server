@@ -64,6 +64,7 @@ func (us *UserService) createUser(user *model.User) (*model.User, error) {
 	}
 
 	ruser, err := us.store.Save(user)
+
 	if err != nil {
 		return nil, err
 	}

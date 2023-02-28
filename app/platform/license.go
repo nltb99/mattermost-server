@@ -253,6 +253,9 @@ func (ps *PlatformService) SetClientLicense(m map[string]string) {
 }
 
 func (ps *PlatformService) ClientLicense() map[string]string {
+	// TODO ?
+	return map[string]string{"IsLicensed": "true"}
+
 	if clientLicense, _ := ps.clientLicenseValue.Load().(map[string]string); clientLicense != nil {
 		return clientLicense
 	}

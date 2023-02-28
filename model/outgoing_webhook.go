@@ -121,9 +121,10 @@ func (o *OutgoingWebhook) IsValid() *AppError {
 		return NewAppError("OutgoingWebhook.IsValid", "model.outgoing_hook.is_valid.channel_id.app_error", nil, "", http.StatusBadRequest)
 	}
 
-	if !IsValidId(o.TeamId) {
-		return NewAppError("OutgoingWebhook.IsValid", "model.outgoing_hook.is_valid.team_id.app_error", nil, "", http.StatusBadRequest)
-	}
+	// TODO TEMP team id ?
+	// if !IsValidId(o.TeamId) {
+	// 	return NewAppError("OutgoingWebhook.IsValid", "model.outgoing_hook.is_valid.team_id.app_error", nil, "", http.StatusBadRequest)
+	// }
 
 	if len(fmt.Sprintf("%s", o.TriggerWords)) > 1024 {
 		return NewAppError("OutgoingWebhook.IsValid", "model.outgoing_hook.is_valid.words.app_error", nil, "", http.StatusBadRequest)

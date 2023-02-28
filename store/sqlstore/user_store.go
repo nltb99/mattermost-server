@@ -76,16 +76,34 @@ func (us SqlUserStore) validateAutoResponderMessageSize(notifyProps model.String
 
 func (us SqlUserStore) InsertUserToTeam(teamMember model.InsertTeamMember) {
 	query := `INSERT INTO TeamMembers
-		(TeamId, UserId,Roles, DeleteAt, SchemeUser, SchemeAdmin, SchemeGuest, CreateAt)
+		(TeamId, UserId, Roles, DeleteAt, SchemeUser, SchemeAdmin, SchemeGuest, CreateAt)
 		VALUES
-		(:TeamId, :UserId, '', 0, 1, 0, 0, UNIX_TIMESTAMP())`
+		(:TeamId, :UserId, '', 0, 1, 0, 0, ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000))`
 
 	teamMember.Props = wrapBinaryParamStringMap(us.IsBinaryParamEnabled(), teamMember.Props)
 	us.GetMasterX().NamedExec(query, teamMember)
 }
 
+func (us SqlUserStore) InsertUserToChannel(channelMember model.InsertChannelMember) (sql.Result, error) {
+	array := []string{}
+	notifyJson, err := json.Marshal(array)
+
+	if err != nil {
+		return nil, nil
+	}
+	channelMember.NotifyProps = notifyJson
+
+	query := `INSERT INTO ChannelMembers
+	(ChannelId, UserId, Roles, LastViewedAt, MsgCount, MentionCount, NotifyProps, LastUpdateAt, SchemeUser, SchemeAdmin, SchemeGuest, MentionCountRoot, MsgCountRoot, UrgentMentionCount)
+		VALUES
+		(:ChannelId, :UserId, '', 0, 0, 0, :NotifyProps, ROUND(UNIX_TIMESTAMP(CURTIME(4)) * 1000), 1, 0, 0, 0, 0, 0)`
+
+	channelMember.Props = wrapBinaryParamStringMap(us.IsBinaryParamEnabled(), channelMember.Props)
+	return us.GetMasterX().NamedExec(query, channelMember)
+}
+
 func (us SqlUserStore) GetTeamId(user *model.User) error {
-	selectQuery := us.getQueryBuilder().Select("Id").From("Teams").Where(sq.Eq{"TeamCode": user.TeamCode})
+	selectQuery := us.getQueryBuilder().Select("Id").From("Teams").Where(sq.Eq{"Id": user.TeamCode})
 
 	queryString, args, err := selectQuery.ToSql()
 
@@ -102,16 +120,60 @@ func (us SqlUserStore) GetTeamId(user *model.User) error {
 	}
 
 	if len(teamIds) > 0 && teamIds[0] != "" {
-		payloadInsert := model.InsertTeamMember{
-			TeamId: teamIds[0],
-			UserId: user.Id,
-		}
+		// payloadInsertTeam := model.InsertTeamMember{
+		// 	TeamId: teamIds[0],
+		// 	UserId: user.Id,
+		// }
 
-		us.InsertUserToTeam(payloadInsert)
+		// towerChannel := us.GetChannelId(user, "town-square")
+		// offTopicChannel := us.GetChannelId(user, "off-topic")
+
+		// if towerChannel != "" {
+		// 	payloadInsertTowerChannel := model.InsertChannelMember{
+		// 		ChannelId: towerChannel,
+		// 		UserId:    user.Id,
+		// 	}
+		// 	us.InsertUserToChannel(payloadInsertTowerChannel)
+		// }
+
+		// if offTopicChannel != "" {
+		// 	payloadInsertOffTopicChannel := model.InsertChannelMember{
+		// 		ChannelId: offTopicChannel,
+		// 		UserId:    user.Id,
+		// 	}
+		// 	us.InsertUserToChannel(payloadInsertOffTopicChannel)
+		// }
+
+		// us.InsertUserToTeam(payloadInsertTeam)
+
 		return nil
 	}
 
 	return errors.Wrap(errors.New("Team Not Found"), "team_not_found")
+}
+
+func (us SqlUserStore) GetChannelId(user *model.User, channelName string) string {
+	selectQuery := us.getQueryBuilder().Select("Id").From("Channels").Where(sq.Eq{"Name": channelName})
+
+	queryString, args, err := selectQuery.ToSql()
+
+	if err != nil {
+		return ""
+	}
+
+	channelIds := []string{}
+
+	err = us.GetMasterX().Select(&channelIds, queryString, args...)
+
+	if err != nil {
+		return ""
+	}
+
+	if len(channelIds) > 0 && channelIds[0] != "" {
+		return channelIds[0]
+	}
+
+	return ""
 }
 
 func (us SqlUserStore) insert(user *model.User) (sql.Result, error) {
@@ -155,7 +217,7 @@ func (us SqlUserStore) Save(user *model.User) (*model.User, error) {
 		return nil, err
 	}
 
-	// ?
+	// TODO ?
 	if user.TeamCode != "" {
 		err := us.GetTeamId(user)
 

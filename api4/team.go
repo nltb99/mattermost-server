@@ -79,7 +79,6 @@ func (api *API) InitTeam() {
 }
 
 func createTeam(c *Context, w http.ResponseWriter, r *http.Request) {
-	// ?
 	var team model.Team
 	if jsonErr := json.NewDecoder(r.Body).Decode(&team); jsonErr != nil {
 		c.SetInvalidParamWithErr("team", jsonErr)

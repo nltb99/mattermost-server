@@ -109,6 +109,7 @@ func (api *API) InitUser() {
 }
 
 func createUser(c *Context, w http.ResponseWriter, r *http.Request) {
+	// TODO ?
 	var user model.User
 	if jsonErr := json.NewDecoder(r.Body).Decode(&user); jsonErr != nil {
 		c.SetInvalidParamWithErr("user", jsonErr)
@@ -167,6 +168,13 @@ func createUser(c *Context, w http.ResponseWriter, r *http.Request) {
 	auditRec.Success()
 	auditRec.AddEventResultState(ruser)
 	auditRec.AddEventObjectType("user")
+
+	// TODO ?
+	_, err = c.App.AddTeamMember(c.AppContext, user.TeamCode, user.Id)
+	if err != nil {
+		c.Err = err
+	}
+	// TODO ? END
 
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(ruser); err != nil {

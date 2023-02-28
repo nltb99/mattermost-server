@@ -186,10 +186,11 @@ func (a *App) CreateUserFromSignup(c request.CTX, user *model.User, redirect str
 		return nil, err
 	}
 
-	if !a.IsFirstUserAccount() && !*a.Config().TeamSettings.EnableOpenServer {
-		err := model.NewAppError("CreateUserFromSignup", "api.user.create_user.no_open_server", nil, "email="+user.Email, http.StatusForbidden)
-		return nil, err
-	}
+	// TODO ?
+	// if !a.IsFirstUserAccount() && !*a.Config().TeamSettings.EnableOpenServer {
+	// 	err := model.NewAppError("CreateUserFromSignup", "api.user.create_user.no_open_server", nil, "email="+user.Email, http.StatusForbidden)
+	// 	return nil, err
+	// }
 
 	user.EmailVerified = false
 

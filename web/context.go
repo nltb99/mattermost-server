@@ -331,9 +331,10 @@ func (c *Context) RequireTeamId() *Context {
 		return c
 	}
 
-	if !model.IsValidId(c.Params.TeamId) {
-		c.SetInvalidURLParam("team_id")
-	}
+	// TODO TEMP team id ?
+	// if !model.IsValidId(c.Params.TeamId) {
+	// 	c.SetInvalidURLParam("team_id")
+	// }
 	return c
 }
 

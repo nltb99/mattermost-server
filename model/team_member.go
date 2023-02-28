@@ -120,9 +120,10 @@ func TeamMemberWithErrorToString(o *TeamMemberWithError) string {
 }
 
 func (o *TeamMember) IsValid() *AppError {
-	if !IsValidId(o.TeamId) {
-		return NewAppError("TeamMember.IsValid", "model.team_member.is_valid.team_id.app_error", nil, "", http.StatusBadRequest)
-	}
+	// TODO TEMP team id ?
+	// if !IsValidId(o.TeamId) {
+	// 	return NewAppError("TeamMember.IsValid", "model.team_member.is_valid.team_id.app_error", nil, "", http.StatusBadRequest)
+	// }
 
 	if !IsValidId(o.UserId) {
 		return NewAppError("TeamMember.IsValid", "model.team_member.is_valid.user_id.app_error", nil, "", http.StatusBadRequest)

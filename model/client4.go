@@ -4037,9 +4037,10 @@ func (c *Client4) GetFlaggedPostsForUser(userId string, page int, perPage int) (
 
 // GetFlaggedPostsForUserInTeam returns flagged posts in team of a user based on user id string.
 func (c *Client4) GetFlaggedPostsForUserInTeam(userId string, teamId string, page int, perPage int) (*PostList, *Response, error) {
-	if !IsValidId(teamId) {
-		return nil, nil, NewAppError("GetFlaggedPostsForUserInTeam", "model.client.get_flagged_posts_in_team.missing_parameter.app_error", nil, "", http.StatusBadRequest)
-	}
+	// TODO TEMP team id ?
+	// if !IsValidId(teamId) {
+	// 	return nil, nil, NewAppError("GetFlaggedPostsForUserInTeam", "model.client.get_flagged_posts_in_team.missing_parameter.app_error", nil, "", http.StatusBadRequest)
+	// }
 
 	query := fmt.Sprintf("?team_id=%v&page=%v&per_page=%v", teamId, page, perPage)
 	r, err := c.DoAPIGet(c.userRoute(userId)+"/posts/flagged"+query, "")

@@ -92,9 +92,10 @@ func (o *Command) IsValid() *AppError {
 		return NewAppError("Command.IsValid", "model.command.is_valid.plugin_id.app_error", nil, "command cannot have both a CreatorId and a PluginId", http.StatusBadRequest)
 	}
 
-	if !IsValidId(o.TeamId) {
-		return NewAppError("Command.IsValid", "model.command.is_valid.team_id.app_error", nil, "", http.StatusBadRequest)
-	}
+	// TODO TEMP team id ?
+	// if !IsValidId(o.TeamId) {
+	// 	return NewAppError("Command.IsValid", "model.command.is_valid.team_id.app_error", nil, "", http.StatusBadRequest)
+	// }
 
 	if len(o.Trigger) < MinTriggerLength || len(o.Trigger) > MaxTriggerLength || strings.Index(o.Trigger, "/") == 0 || strings.Contains(o.Trigger, " ") {
 		return NewAppError("Command.IsValid", "model.command.is_valid.trigger.app_error", nil, "", http.StatusBadRequest)

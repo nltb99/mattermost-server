@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	sq "github.com/mattermost/squirrel"
 	"github.com/pkg/errors"
 
@@ -230,12 +231,16 @@ func (s SqlTeamStore) Save(team *model.Team) (*model.Team, error) {
 		return nil, err
 	}
 
+	// TODO ?
+	myUUID := uuid.NewString()
+	team.Id = myUUID[0:6]
+
 	if _, err := s.GetMasterX().NamedExec(`INSERT INTO Teams
 		(Id, CreateAt, UpdateAt, DeleteAt, DisplayName, Name, Description, Email, Type, CompanyName, AllowedDomains,
-		InviteId, AllowOpenInvite, LastTeamIconUpdate, SchemeId, GroupConstrained, CloudLimitsArchived, TeamCode)
+		InviteId, AllowOpenInvite, LastTeamIconUpdate, SchemeId, GroupConstrained, CloudLimitsArchived)
 		VALUES
 		(:Id, :CreateAt, :UpdateAt, :DeleteAt, :DisplayName, :Name, :Description, :Email, :Type, :CompanyName, :AllowedDomains,
-		:InviteId, :AllowOpenInvite, :LastTeamIconUpdate, :SchemeId, :GroupConstrained, :CloudLimitsArchived, :TeamCode)`, team); err != nil {
+		:InviteId, :AllowOpenInvite, :LastTeamIconUpdate, :SchemeId, :GroupConstrained, :CloudLimitsArchived)`, team); err != nil {
 		if IsUniqueConstraintError(err, []string{"Name", "teams_name_key"}) {
 			return nil, store.NewErrInvalidInput("Team", "id", team.Id)
 		}

@@ -98,9 +98,10 @@ func (o *Team) Etag() string {
 }
 
 func (o *Team) IsValid() *AppError {
-	if !IsValidId(o.Id) {
-		return NewAppError("Team.IsValid", "model.team.is_valid.id.app_error", nil, "", http.StatusBadRequest)
-	}
+	// TODO TEMP team id ?
+	// if !IsValidId(o.Id) {
+	// 	return NewAppError("Team.IsValid", "model.team.is_valid.id.app_error", nil, "", http.StatusBadRequest)
+	// }
 
 	if o.CreateAt == 0 {
 		return NewAppError("Team.IsValid", "model.team.is_valid.create_at.app_error", nil, "id="+o.Id, http.StatusBadRequest)

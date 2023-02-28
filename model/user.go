@@ -112,6 +112,13 @@ type InsertTeamMember struct {
 	Props  StringMap `json:"props,omitempty"`
 }
 
+type InsertChannelMember struct {
+	ChannelId   string    `json:"channel_id"`
+	UserId      string    `json:"user_id"`
+	NotifyProps []byte    `json:"notify_props"`
+	Props       StringMap `json:"props,omitempty"`
+}
+
 func (u *User) Auditable() map[string]interface{} {
 	return map[string]interface{}{
 		"id":                         u.Id,
